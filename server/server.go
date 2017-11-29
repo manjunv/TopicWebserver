@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"io/ioutil"
+	"path/filepath"
 )
 
-var path = "/Users/mgovin739/go/src/server/form.html"
+var path = "$HOME/form"
 
 
 func check(e error) {
@@ -24,36 +26,57 @@ func isError(err error) bool {
 	return (err != nil)
 }
 
-func deleteFile() {
-	var err = os.Remove(path)
+func deleteFile(file string) {
+	var err = os.Remove(file)
 	if isError(err) { return }
 }
 
+
+func updateTopic(file string,req *http.Request) { 
+	var write []byte
+	if _, err := os.Stat(file); os.IsNotExist(err) {
+		return
+        }
+	outfile, err := os.Open(file)
+    		check(err)
+    	if err != nil {
+       		panic(err)
+    	}
+    	defer outfile.Close()
+	body, err := ioutil.ReadAll(req.Body)
+	write = append(write, []byte(body)...)
+	write = append(write, body...)
+
+	//write it to a file
+	err = ioutil.WriteFile(file,write, 0644)
+	if err != nil {
+    		panic(err)
+	}
+}
+ 
 func httphandler(w http.ResponseWriter, r *http.Request) {
 
     if r.URL.Path != "/" {
         http.Error(w, "404 not found.", http.StatusNotFound)
         return
     }
-    
+    file := filepath.Base(path)
     switch r.Method {
 
     case "GET":     
-         http.ServeFile(w, r, "form.html")
+         http.ServeFile(w, r,file)
 
     case "POST":
+	if _, err := os.Stat(file); os.IsNotExist(err) {
+		updateTopic(file,r)
+      }
+	updateTopic(file,r)
         if err := r.ParseForm(); err != nil {
             fmt.Fprintf(w, "ParseForm() err: %v", err)
             return
         }
-        fmt.Fprintf(w, "Post from Topic ! TOPIC = %v\n", r.PostForm)
-        name := r.FormValue("name")
-        address := r.FormValue("address")
-        fmt.Fprintf(w, "Topic = %s\n", name)
-        fmt.Fprintf(w, "Topic Content = %s\n",address)
-
     case "DELETE":
-	deleteFile()
+	deleteFile(file)
     default:
         fmt.Fprintf(w, "nil methods are not supported.")
     }
