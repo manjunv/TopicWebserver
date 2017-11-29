@@ -24,6 +24,16 @@ Add syncronisation routines so that multiple post routines can handle same topic
 
 You can connect to a public server server that is running at our demo site: [nats://<hostserverIp>:8080]
 
+### ENVIRONMENT SETTINGS
+
+export HOME=$HOME/go/src/TopicWebserver/server/
+export GOPATH=$HOME/go/src/TopicWebserver/server/
+
+check using go env and make sure it reflects abve env setting
+
+GOPATH="/Users/mgovin739/go/src/TopicWebserver/server/go"
+GOROOT="/usr/local/go"
+
 ### Build
 
 You can build the latest version of the server from the `master` branch. The master branch generally should build and pass tests, but may not work correctly in your environment. Note that stable branches of operating system packagers provided by your OS vendor may not be sufficient.
@@ -49,6 +59,21 @@ The server is started and listening for client connections on port 4222 (the def
 ### Clients
 
 Curl is currently supportted clients
+
+#POST COMMAND Ensure filename.txt has data to be posted to topic
+
+curl -X POST  -d @filename.txt http://127.0.0.1:8080
+
+#GET COMMAND Ensure filename.txt has data to be posted to topic
+
+curl -H "Accept: form" -H "Content-Type: form" -X GET http://127.0.0.1:8080
+
+#GET COMMAND Ensure filename.txt has data to be posted to topic
+curl -H "Accept: form" -H "Content-Type: form" -X GET http://127.0.0.1:8080
+
+#RESTFUL POST/UPLOAD TOPIC to webserver with @filename containing data
+
+curl -X POST -d @filename http://27.0.0.1:8080
 
 ### Protocol
 
