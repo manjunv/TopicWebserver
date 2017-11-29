@@ -75,10 +75,13 @@ curl -H "Accept: form" -H "Content-Type: form" -X GET http://127.0.0.1:8080
 
 curl -X POST -d @filename http://27.0.0.1:8080
 
+<<<<<<< HEAD
 #DELETE
 
 curl -X DELETE  -d @filename.txt http://127.0.0.1:8080
 
+=======
+>>>>>>> 6907248755c233250600f7d5393680bdc97b7c34
 ### Protocol
 
 The server server uses a [text based protocol] HTTPS/HTTP and confirms to HTTP/1.1 [RFC2616]
